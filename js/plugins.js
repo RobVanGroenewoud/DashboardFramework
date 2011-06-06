@@ -14,3 +14,43 @@ window.log = function(){
 
 
 // place any jQuery/helper plugins in here, instead of separate, slower script files.
+
+// Full screen detection. Source: https://github.com/ruidlopes/jquery-fullscreen
+
+(function($, window, documentElement, height, width) {
+	
+	var 
+		isFullScreen = function() {
+			return (documentElement.clientHeight == height && documentElement.clientWidth == width) ||
+				window.fullScreen ||
+				(window.outerHeight == height && window.outerWidth == width)
+			;
+		}
+		,$window = $(window)
+	;
+	
+	$window
+		.data('fullscreen-state', isFullScreen())
+		.resize(function() {
+			var fullscreenState = isFullScreen();
+			
+			if ($window.data('fullscreen-state') && !fullscreenState) {
+				$window
+					.data('fullscreen-state', fullscreenState)
+					.trigger('fullscreen-toggle', [false])
+					.trigger('fullscreen-off')
+				;
+			}
+			else if (!$window.data('fullscreen-state') && fullscreenState) {
+				$window
+					.data('fullscreen-state', fullscreenState)
+					.trigger('fullscreen-toggle', [true])
+					.trigger('fullscreen-on')
+				;
+			}
+		})
+	;
+
+})(jQuery, this, document.documentElement, screen.height, screen.width);
+
+// End Full screen detection.
